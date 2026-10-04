@@ -1,0 +1,28 @@
+##
+## EPITECH PROJECT, 2026
+## PGP
+## File description:
+## Makefile
+##
+
+SRC	= 	src/Main.hs		\
+		src/Types.hs 	\
+		src/Parsing.hs 	\
+		src/Help.hs
+
+
+NAME =	my_pgp
+
+all :	$(NAME)
+
+$(NAME):	$(SRC)
+	ghc -o $(NAME) $(SRC)
+
+fclean:	clean
+	rm -f $(NAME)
+	rm -f *.o
+	rm -f *.hi
+
+re:	fclean $(NAME)
+
+.PHONY: all clean fclean re
