@@ -8,49 +8,48 @@
 module Parsing where
 
 import Types (CryptoSystem(..), Mode(..), Option(..))
-import Help
 
-parseArgs :: [String] -> Maybe CryptoSystem
+parseArgs :: [String] -> String -> Maybe CryptoSystem
 -- help
-parseArgs ["-h"] = Just Help
+parseArgs ["-h"] _ = Just Help
 
 -- xor
-parseArgs ("xor" : args) = case parseMode args False of
+parseArgs ("xor" : args) message = case parseMode args message False of
     Just mode -> Just $ XOR mode
     Nothing -> Nothing
 
 -- aes
-parseArgs ("aes" : args) = case parseMode args False of
+parseArgs ("aes" : args) message = case parseMode args message False of
     Just mode -> Just $ AES mode
     Nothing -> Nothing
 
 -- rsa
-parseArgs ("rsa" : args) = case parseMode args True of
+parseArgs ("rsa" : args) message = case parseMode args message True of
     Just mode -> Just $ RSA mode
     Nothing -> Nothing
 
 -- pgp-xor
-parseArgs ("pgp-xor" : args) = case parseMode args False of
+parseArgs ("pgp-xor" : args) message = case parseMode args message False of
     Just mode -> Just $ PGP_XOR mode
     Nothing -> Nothing
 
 -- pgp-aes
-parseArgs ("pgp-aes" : args) = case parseMode args False of
+parseArgs ("pgp-aes" : args) message = case parseMode args message False of
     Just mode -> Just $ PGP_AES mode
     Nothing -> Nothing
 
 -- fallback
-parseArgs _ = Nothing
+parseArgs _ _ = Nothing
 
-parseMode :: [String] -> Bool -> Maybe Mode
-parseMode ["-c", "-b", key] _ = Just $ Cipher Block key
+parseMode :: [String] -> String -> Bool -> Maybe Mode
+parseMode ["-c", "-b", key] message _ = Just $ Cipher Block key message
 
-parseMode ["-c", key] _ = Just $ Cipher NoOption key
+parseMode ["-c", key] message _ = Just $ Cipher NoOption key message
 
-parseMode ["-d", "-b", key] _ = Just $ Decipher Block key
+parseMode ["-d", "-b", key] message _ = Just $ Decipher Block key message
 
-parseMode ["-d", key] _ = Just $ Decipher NoOption key
+parseMode ["-d", key] message _ = Just $ Decipher NoOption key message
 
-parseMode ["-g", p, q, key] True = Just $ Generate p q key
+parseMode ["-g", p, q, key] _ True = Just $ Generate p q key
 
-parseMode _ _ = Nothing
+parseMode _ _ _ = Nothing

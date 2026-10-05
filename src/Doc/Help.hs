@@ -5,11 +5,10 @@
 -- Help
 -}
 
-module Help where
+module Doc.Help where
 
 import System.Exit
 import Data.List (intercalate)
-
 
 helpTextDescrpitionArgs :: [String]
 helpTextDescrpitionArgs = [

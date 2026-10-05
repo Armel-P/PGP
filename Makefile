@@ -8,7 +8,7 @@
 SRC	= 	src/Main.hs		\
 		src/Types.hs 	\
 		src/Parsing.hs 	\
-		src/Help.hs
+		src/Doc/Help.hs
 
 
 NAME =	my_pgp

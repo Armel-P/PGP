@@ -7,14 +7,17 @@
 
 import System.Exit
 import System.Environment
-import Types
-import Parsing
-import Help
+
+import Types (CryptoSystem(..))
+import Parsing (parseArgs)
+import Doc.Help (help)
+import Xor (xor)
 
 main :: IO()
 main = do
     args <- getArgs
-    case parseArgs args of
+    message <- getContents
+    case parseArgs args message of
         Nothing -> exitWith (ExitFailure 84)
 
         Just Help -> help
