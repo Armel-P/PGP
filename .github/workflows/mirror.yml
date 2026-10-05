@@ -7,8 +7,8 @@ on:
       - main
 
 env:
-  MIRROR_URL: https://github.com/EpitechPGE3-2026/G-CNA-500-BDX-5-1-mypgp-4.git
-  MIRROR_REPO: EpitechPGE3-2026/G-WEB-500-BDX-5-1-dashboard-6
+  MIRROR_URL: git@github.com:EpitechPGE3-2026/G-CNA-500-BDX-5-1-mypgp-4.git
+  MIRROR_REPO: EpitechPGE3-2026/G-CNA-500-BDX-5-1-mypgp-4
 
 jobs:
   build:
