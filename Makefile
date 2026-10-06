@@ -5,11 +5,12 @@
 ## Makefile
 ##
 
-SRC	= 	src/Main.hs		\
-		src/Types.hs 	\
+SRC	= 	src/Main.hs			\
+		src/Types.hs 		\
 		src/Utils.hs		\
-		src/Parsing.hs 	\
-		src/Doc/Help.hs \
+		src/Conversion.hs	\
+		src/Parsing.hs 		\
+		src/Doc/Help.hs 	\
 		src/Xor.hs
 
 

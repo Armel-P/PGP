@@ -7,6 +7,8 @@
 
 module Types where
 
+import Data.Word (Word8)
+
 data CryptoSystem
     = Help
     | XOR Mode
@@ -16,6 +18,6 @@ data CryptoSystem
     | PGP_AES Mode
 
 data Mode
-    = Cipher String String
-    | Decipher String String
-    | Generate String String
+    = Cipher [Word8] [Word8]
+    | Decipher [Word8] [Word8]
+    | Generate [Word8] [Word8]

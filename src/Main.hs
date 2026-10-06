@@ -7,28 +7,26 @@
 
 import System.Exit
 import System.Environment
+import System.IO
 
-import Utils (failure)
+import Utils (failure, dropFinalNewline)
 import Types (CryptoSystem(..))
 import Parsing (parseArgs)
 import Doc.Help (help)
 import Xor (xorMode)
 
 main :: IO()
-main = do
-    args <- getArgs
-    message <- getContents
-    case parseArgs args message of
-        Nothing -> failure
+main = setBinary
+    >> (parseArgs <$> getArgs <*> (dropFinalNewline <$> getContents))
+    >>= maybe failure run
 
-        Just Help -> help
+setBinary :: IO()
+setBinary = mapM_ (`hSetBinaryMode` True) [stdin, stdout]
 
-        Just (XOR mode) -> xorMode mode
-
-        Just (AES mode) -> exitSuccess -- TODO: implement AES
-
-        Just (RSA mode) -> exitSuccess -- TODO: implement RSA
-
-        Just (PGP_XOR mode) -> exitSuccess -- TODO: implement PGP_XOR
-
-        Just (PGP_AES mode) -> exitSuccess -- TODO: implement PGP_AES
+run :: CryptoSystem -> IO()
+run Help          = help
+run (XOR mode)    = xorMode mode
+run (AES _)       = exitSuccess  -- TODO
+run (RSA _)       = exitSuccess  -- TODO
+run (PGP_XOR _)   = exitSuccess  -- TODO
+run (PGP_AES _)   = exitSuccess  -- TODO

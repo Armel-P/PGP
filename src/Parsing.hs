@@ -7,7 +7,10 @@
 
 module Parsing where
 
-import Types (CryptoSystem(..), Mode(..), )
+import Data.Word (Word8)
+
+import Types (CryptoSystem(..), Mode(..))
+import Conversion (hexToBytes, toBytes)
 
 parseArgs :: [String] -> String -> Maybe CryptoSystem
 -- help
@@ -42,18 +45,36 @@ parseArgs ("pgp-aes" : args) msg = case parseMode args msg False of
 parseArgs _ _ = Nothing
 
 parseMode :: [String] -> String -> Bool -> Maybe Mode
-parseMode ["-c", "-b", key] msg _ 
-    | length key == 2 * length msg = Just $ Cipher key msg
+parseMode ["-c", "-b", key] msg _ =
+    parseModeBytes ["-c", "-b"] (hexToBytes key) (Just $ toBytes msg)
+
+parseMode ["-c", key] msg _ =
+    parseModeBytes ["-c"] (hexToBytes key) (Just $ toBytes msg)
+
+parseMode ["-d", "-b", key] msg _ =
+    parseModeBytes ["-d", "-b"] (hexToBytes key) (hexToBytes msg)
+
+parseMode ["-d", key] msg _ =
+    parseModeBytes ["-d"] (hexToBytes key) (hexToBytes msg)
+
+parseMode ["-g", p, q] _ True =
+    parseModeBytes ["-g"] (hexToBytes q) (hexToBytes q)
+
+parseMode _ _ _ = Nothing
+
+parseModeBytes :: [String] -> Maybe [Word8] -> Maybe [Word8] -> Maybe Mode
+parseModeBytes ["-c", "-b"] (Just key) (Just msg)
+    | length key == length msg = Just $ Cipher key msg
     | otherwise = Nothing
 
-parseMode ["-c", key] msg _ = Just $ Cipher key msg
+parseModeBytes ["-c"] (Just key) (Just msg) = Just $ Cipher key msg
 
-parseMode ["-d", "-b", key] msg _
+parseModeBytes ["-d", "-b"] (Just key) (Just msg)
     | length key == length msg = Just $ Decipher key msg
     | otherwise = Nothing
 
-parseMode ["-d", key] msg _ = Just $ Decipher key msg
+parseModeBytes ["-d"] (Just key) (Just msg) = Just $ Decipher key msg
 
-parseMode ["-g", p, q] _ True = Just $ Generate p q
+parseModeBytes ["-g"] (Just key) (Just msg) = Just $ Generate key msg
 
-parseMode _ _ _ = Nothing
+parseModeBytes _ _ _ = Nothing
