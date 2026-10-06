@@ -8,21 +8,22 @@
 import System.Exit
 import System.Environment
 
+import Utils (failure)
 import Types (CryptoSystem(..))
 import Parsing (parseArgs)
 import Doc.Help (help)
-import Xor (xor)
+import Xor (xorMode)
 
 main :: IO()
 main = do
     args <- getArgs
     message <- getContents
     case parseArgs args message of
-        Nothing -> exitWith (ExitFailure 84)
+        Nothing -> failure
 
         Just Help -> help
 
-        Just (XOR mode) -> exitSuccess -- TODO: implement XOR
+        Just (XOR mode) -> xorMode mode
 
         Just (AES mode) -> exitSuccess -- TODO: implement AES
 

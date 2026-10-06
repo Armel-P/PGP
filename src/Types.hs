@@ -16,10 +16,6 @@ data CryptoSystem
     | PGP_AES Mode
 
 data Mode
-    = Cipher Option String String
-    | Decipher Option String String
-    | Generate String String String
-
-data Option
-    = Block
-    | NoOption
+    = Cipher String String
+    | Decipher String String
+    | Generate String String
