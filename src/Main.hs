@@ -14,6 +14,7 @@ import Types (CryptoSystem(..))
 import Parsing (parseArgs)
 import Doc.Help (help)
 import Xor (xorMode)
+import Aes (aesMode)
 
 main :: IO()
 main = setBinary
@@ -26,7 +27,7 @@ setBinary = mapM_ (`hSetBinaryMode` True) [stdin, stdout]
 run :: CryptoSystem -> IO()
 run Help          = help
 run (XOR mode)    = xorMode mode
-run (AES _)       = exitSuccess  -- TODO
+run (AES mode)    = aesMode mode
 run (RSA _)       = exitSuccess  -- TODO
 run (PGP_XOR _)   = exitSuccess  -- TODO
 run (PGP_AES _)   = exitSuccess  -- TODO

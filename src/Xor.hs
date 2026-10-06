@@ -38,15 +38,15 @@ xorWith block key = concatMap (block key) . padChunks (length key)
 
 -- Cipher / decipher (pure)
 
-xorCipher :: [Word8] -> [Word8] -> String
-xorCipher key msg = bytesToHex (xorWith cipherBlock key msg)
+xorCipher :: [Word8] -> [Word8] -> [Word8]
+xorCipher = xorWith cipherBlock
 
-xorDecipher :: [Word8] -> [Word8] -> String
-xorDecipher key msg = fromBytes (xorWith decipherBlock key msg)
+xorDecipher :: [Word8] -> [Word8] -> [Word8]
+xorDecipher = xorWith decipherBlock
 
 -- Entry point
 
 xorMode :: Mode -> IO()
-xorMode (Cipher key msg)   = putStr $ xorCipher key msg
-xorMode (Decipher key msg) = putStr $ xorDecipher key msg
+xorMode (Cipher key msg)   = putStr $ bytesToHex $ xorCipher key msg
+xorMode (Decipher key msg) = putStr $ fromBytes $ xorDecipher key msg
 xorMode _                  = failure

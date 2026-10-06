@@ -11,7 +11,8 @@ SRC	= 	src/Main.hs			\
 		src/Conversion.hs	\
 		src/Parsing.hs 		\
 		src/Doc/Help.hs 	\
-		src/Xor.hs
+		src/Xor.hs			\
+		src/Aes.hs
 
 
 NAME =	my_pgp
