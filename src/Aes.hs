@@ -40,7 +40,7 @@ sBoxList =
 sBox :: Array Word8 Word8
 sBox = listArray (0, 255) sBoxList
 
--- inverse sBox, built from the sBox itself (no need to type it again)
+-- inverse sBox, built from the sBox itself
 invSBox :: Array Word8 Word8
 invSBox = array (0, 255) [ (v, i) | (i, v) <- assocs sBox ]
 
@@ -144,8 +144,14 @@ roundKeys = map concat . chunksOf 4 . expandKey
 validKey :: [Word8] -> Bool
 validKey key = length key `elem` [16, 24, 32]
 
+-- encryptBlock :: [[Word8]] -> [Word8] -> [Word8]
+-- encryptBlock rks msg = trace ("Round key: " ++ show rks) final (last rks) (foldl step (addRoundKey (head rks) msg) (init (tail rks)))
+--   where
+--     step s k = addRoundKey k (mixColumns (shiftRows (subBytes s)))
+--     final k s = addRoundKey k (shiftRows (subBytes s))
+
 encryptBlock :: [[Word8]] -> [Word8] -> [Word8]
-encryptBlock rks msg = final (last rks) (foldl step (addRoundKey (head rks) msg) (init (tail rks)))
+encryptBlock rks msg = trace ("Round key: " ++ show rks) final (last rks) (foldl step (addRoundKey (head rks) msg) (init (tail rks)))
   where
     step s k = addRoundKey k (mixColumns (shiftRows (subBytes s)))
     final k s = addRoundKey k (shiftRows (subBytes s))
@@ -168,11 +174,14 @@ aesDecipher key msg
 
 -- Entry point
 
+-- reverseChunksOf4 :: [Word8] -> [Word8]
+-- reverseChunksOf4 = concatMap reverse . chunksOf 4
+
 aesMode :: Mode -> IO ()
 aesMode (Cipher key msg)   = case aesCipher key msg of
-    Just cipherMsg -> putStr $ bytesToHex cipherMsg
+    Just cipherMsg -> putStrLn $ bytesToHex cipherMsg
     Nothing -> failure
 aesMode (Decipher key msg) = case aesDecipher key msg of
-    Just decipherMsg -> putStr $ fromBytes decipherMsg
+    Just decipherMsg -> putStrLn $ fromBytes decipherMsg
     Nothing -> failure
 aesMode _ = failure

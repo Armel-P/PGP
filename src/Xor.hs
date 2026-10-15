@@ -47,6 +47,6 @@ xorDecipher = xorWith decipherBlock
 -- Entry point
 
 xorMode :: Mode -> IO()
-xorMode (Cipher key msg)   = putStr $ bytesToHex $ xorCipher key msg
-xorMode (Decipher key msg) = putStr $ fromBytes $ xorDecipher key msg
+xorMode (Cipher key msg)   = putStrLn $ bytesToHex $ xorCipher key msg
+xorMode (Decipher key msg) = putStrLn $ fromBytes $ xorDecipher key msg
 xorMode _                  = failure

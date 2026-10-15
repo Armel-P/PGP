@@ -14,7 +14,6 @@ SRC	= 	src/Main.hs			\
 		src/Xor.hs			\
 		src/Aes.hs
 
-
 NAME =	my_pgp
 
 all :	$(NAME)
