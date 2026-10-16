@@ -168,14 +168,20 @@ aesDecipher key msg
 
 -- Entry point
 
--- reverseChunksOf4 :: [Word8] -> [Word8]
--- reverseChunksOf4 = concatMap reverse . chunksOf 4
+reverseChunksOf4 :: [Word8] -> [Word8]
+reverseChunksOf4 = concatMap reverse . chunksOf 4
 
 aesMode :: Mode -> IO ()
-aesMode (Cipher key msg)   = case aesCipher key msg of
-    Just cipherMsg -> putStrLn $ bytesToHex cipherMsg
-    Nothing -> failure
-aesMode (Decipher key msg) = case aesDecipher key msg of
-    Just decipherMsg -> putStrLn $ fromBytes decipherMsg
-    Nothing -> failure
+aesMode (Cipher key msg) =
+    case aesCipher (reverseChunksOf4 key) msg of
+        Just cipherMsg ->
+            putStrLn $ bytesToHex (reverseChunksOf4 cipherMsg)
+        Nothing -> failure
+aesMode (Decipher key msg) =
+    case aesDecipher
+        (reverseChunksOf4 key)
+        (reverseChunksOf4 msg) of
+        Just decipherMsg ->
+            putStrLn $ fromBytes decipherMsg
+        Nothing -> failure
 aesMode _ = failure
