@@ -144,14 +144,8 @@ roundKeys = map concat . chunksOf 4 . expandKey
 validKey :: [Word8] -> Bool
 validKey key = length key `elem` [16, 24, 32]
 
--- encryptBlock :: [[Word8]] -> [Word8] -> [Word8]
--- encryptBlock rks msg = trace ("Round key: " ++ show rks) final (last rks) (foldl step (addRoundKey (head rks) msg) (init (tail rks)))
---   where
---     step s k = addRoundKey k (mixColumns (shiftRows (subBytes s)))
---     final k s = addRoundKey k (shiftRows (subBytes s))
-
 encryptBlock :: [[Word8]] -> [Word8] -> [Word8]
-encryptBlock rks msg = trace ("Round key: " ++ show rks) final (last rks) (foldl step (addRoundKey (head rks) msg) (init (tail rks)))
+encryptBlock rks msg = final (last rks) (foldl step (addRoundKey (head rks) msg) (init (tail rks)))
   where
     step s k = addRoundKey k (mixColumns (shiftRows (subBytes s)))
     final k s = addRoundKey k (shiftRows (subBytes s))
