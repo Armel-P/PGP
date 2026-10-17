@@ -20,4 +20,4 @@ data CryptoSystem
 data Mode
     = Cipher [Word8] [Word8]
     | Decipher [Word8] [Word8]
-    | Generate [Word8] [Word8]
+    | Generate Integer Integer

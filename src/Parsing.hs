@@ -10,7 +10,7 @@ module Parsing where
 import Data.Word (Word8)
 
 import Types (CryptoSystem(..), Mode(..))
-import Conversion (hexToBytes, toBytes)
+import Conversion (hexToBytes, toBytes, hexToInteger)
 
 parseArgs :: [String] -> String -> Maybe CryptoSystem
 -- help
@@ -45,6 +45,18 @@ parseArgs ("pgp-aes" : args) msg = case parseMode args msg False of
 parseArgs _ _ = Nothing
 
 parseMode :: [String] -> String -> Bool -> Maybe Mode
+-- rsa
+parseMode ["-c", key] msg True =
+    Just $ Cipher (toBytes key) (toBytes msg)
+
+parseMode ["-d", key] msg True =
+    case hexToBytes msg of
+        Just bytes -> Just $ Decipher (toBytes key) bytes
+        Nothing    -> Nothing
+
+parseMode ["-g", p, q] _ True = verifyGenerate (hexToInteger p) (hexToInteger q)
+
+-- Other crypto systems
 parseMode ["-c", "-b", key] msg _ =
     parseModeBytes ["-c", "-b"] (hexToBytes key) (Just $ toBytes msg)
 
@@ -57,10 +69,11 @@ parseMode ["-d", "-b", key] msg _ =
 parseMode ["-d", key] msg _ =
     parseModeBytes ["-d"] (hexToBytes key) (hexToBytes msg)
 
-parseMode ["-g", p, q] _ True =
-    parseModeBytes ["-g"] (hexToBytes q) (hexToBytes q)
-
 parseMode _ _ _ = Nothing
+
+verifyGenerate :: Maybe Integer -> Maybe Integer -> Maybe Mode
+verifyGenerate (Just p) (Just q) = Just $ Generate p q
+verifyGenerate _ _ = Nothing
 
 parseModeBytes :: [String] -> Maybe [Word8] -> Maybe [Word8] -> Maybe Mode
 parseModeBytes ["-c", "-b"] (Just key) (Just msg)
@@ -74,7 +87,5 @@ parseModeBytes ["-d", "-b"] (Just key) (Just msg)
     | otherwise = Nothing
 
 parseModeBytes ["-d"] (Just key) (Just msg) = Just $ Decipher key msg
-
-parseModeBytes ["-g"] (Just key) (Just msg) = Just $ Generate key msg
 
 parseModeBytes _ _ _ = Nothing

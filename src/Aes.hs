@@ -2,7 +2,7 @@
 -- EPITECH PROJECT, 2026
 -- PGP
 -- File description:
--- Conversion
+-- Aes
 -}
 
 
@@ -14,7 +14,7 @@ import Data.Word (Word8)
 
 import Utils (failure)
 import Types (Mode(..))
-import Conversion (bytesToHex, fromBytes)
+import Conversion (bytesToHex, fromBytes, chunksOf, reverseChunksOf4)
 
 -- Const
 
@@ -105,10 +105,6 @@ invMixColumns = concatMap invMixColumn . chunksOf 4
 
 -- Key expansion
 
-chunksOf :: Int -> [a] -> [[a]]
-chunksOf _ [] = []
-chunksOf n xs = let (h, t) = splitAt n xs in h : chunksOf n t
-
 rotWord :: [Word8] -> [Word8]
 rotWord (a:rest) = rest ++ [a]
 rotWord []       = []
@@ -116,11 +112,9 @@ rotWord []       = []
 subWord :: [Word8] -> [Word8]
 subWord = map (sBox !)
 
--- rcon 1 = 0x01, rcon 2 = 0x02, rcon 3 = 0x04 ... (doubling in GF(2^8))
 rcon :: Int -> Word8
 rcon n = iterate mul2 1 !! (n - 1)
 
--- all the words of the expanded key (4 words per round key)
 expandKey :: [Word8] -> [[Word8]]
 expandKey key = ws
   where
@@ -168,20 +162,13 @@ aesDecipher key msg
 
 -- Entry point
 
-reverseChunksOf4 :: [Word8] -> [Word8]
-reverseChunksOf4 = concatMap reverse . chunksOf 4
-
 aesMode :: Mode -> IO ()
 aesMode (Cipher key msg) =
     case aesCipher (reverseChunksOf4 key) msg of
-        Just cipherMsg ->
-            putStrLn $ bytesToHex (reverseChunksOf4 cipherMsg)
+        Just cipherMsg -> putStrLn $ bytesToHex (reverseChunksOf4 cipherMsg)
         Nothing -> failure
 aesMode (Decipher key msg) =
-    case aesDecipher
-        (reverseChunksOf4 key)
-        (reverseChunksOf4 msg) of
-        Just decipherMsg ->
-            putStrLn $ fromBytes decipherMsg
+    case aesDecipher (reverseChunksOf4 key) (reverseChunksOf4 msg) of
+        Just decipherMsg -> putStrLn $ fromBytes decipherMsg
         Nothing -> failure
 aesMode _ = failure

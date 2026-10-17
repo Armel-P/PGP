@@ -15,6 +15,7 @@ import Parsing (parseArgs)
 import Doc.Help (help)
 import Xor (xorMode)
 import Aes (aesMode)
+import Rsa (rsaMode)
 
 main :: IO()
 main = setBinary
@@ -28,6 +29,6 @@ run :: CryptoSystem -> IO()
 run Help          = help
 run (XOR mode)    = xorMode mode
 run (AES mode)    = aesMode mode
-run (RSA _)       = exitSuccess  -- TODO
+run (RSA mode)    = rsaMode mode
 run (PGP_XOR _)   = exitSuccess  -- TODO
 run (PGP_AES _)   = exitSuccess  -- TODO
